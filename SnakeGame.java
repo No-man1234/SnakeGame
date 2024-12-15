@@ -69,45 +69,51 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
     }
 
     public void draw(Graphics g) {
-        // Grid
-        for (int i = 0; i < boardWidth/tileSize; i++) {
-            g.drawLine(i*tileSize, 0, i*tileSize, boardHeight);
-            g.drawLine(0, i*tileSize, boardWidth, i*tileSize);
-        }
-
-        // Food
-        g.setColor(Color.red);
-        g.fillRect(food.x*tileSize, food.y*tileSize, tileSize, tileSize);
-
-        // Snake Head
-        g.setColor(Color.green);
-        g.fillRect(snakeHead.x*tileSize, snakeHead.y*tileSize, tileSize, tileSize);
-
-        // Snake Body
-        for (int i = 0; i < snakeBody.size(); i++) {
-            Tile snakePart = snakeBody.get(i);
-            g.fillRect(snakePart.x*tileSize, snakePart.y*tileSize, tileSize, tileSize);
-        }
-
-        // Score and Game Over
-        g.setColor(Color.white);
-        g.setFont(new Font("Arial", Font.PLAIN, 16));
         if (gameOver) {
-            g.drawString("Game Over! Score: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
-            g.drawString("Press SPACE to restart or '0' to exit", tileSize - 16, tileSize + 20);
-        }
-        else {
-            g.drawString("Score: " + String.valueOf(snakeBody.size()), tileSize - 16, tileSize);
+            // Display game over message
+            g.setColor(Color.white);
+            g.setFont(new Font("Arial", Font.BOLD, 36));
+            String gameOverText = "Game Over";
+            int textWidth = g.getFontMetrics().stringWidth(gameOverText);
+            g.drawString(gameOverText, (boardWidth - textWidth) / 2, boardHeight / 2 - 20);
+
+            g.setFont(new Font("Arial", Font.PLAIN, 24));
+            String scoreText = "Score: " + String.valueOf(snakeBody.size());
+            textWidth = g.getFontMetrics().stringWidth(scoreText);
+            g.drawString(scoreText, (boardWidth - textWidth) / 2, boardHeight / 2 + 10);
+
+            String restartText = "Press SPACE to restart or '0' to exit";
+            textWidth = g.getFontMetrics().stringWidth(restartText);
+            g.drawString(restartText, (boardWidth - textWidth) / 2, boardHeight / 2 + 40);
+        } else {
+            // Food
+            g.setColor(Color.red);
+            g.fillOval(food.x * tileSize, food.y * tileSize, tileSize, tileSize);
+
+            // Snake Head
+            g.setColor(Color.green);
+            g.fillRect(snakeHead.x * tileSize, snakeHead.y * tileSize, tileSize, tileSize);
+
+            // Snake Body
+            for (int i = 0; i < snakeBody.size(); i++) {
+                Tile snakePart = snakeBody.get(i);
+                g.fillRect(snakePart.x * tileSize, snakePart.y * tileSize, tileSize, tileSize);
+            }
+
+            // Score
+            g.setColor(Color.white);
+            g.setFont(new Font("Arial", Font.PLAIN, 16));
+            g.drawString("Score: " + String.valueOf(snakeBody.size()), 10, 20);
         }
     }
 
     public void placeFood() {
         boolean validPosition = false;
-    
+
         while (!validPosition) {
             food.x = random.nextInt(boardWidth / tileSize);
             food.y = random.nextInt(boardHeight / tileSize);
-    
+
             // Check if the food position overlaps with the snake
             validPosition = true;
             if (collision(snakeHead, food)) {
@@ -121,7 +127,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
                 }
             }
         }
-    }    
+    }
 
     public boolean collision(Tile tile1, Tile tile2) {
         return tile1.x == tile2.x && tile1.y == tile2.y;
@@ -134,14 +140,13 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         }
 
         // Snake Body
-        for (int i = snakeBody.size()-1; i >= 0; i--) {
+        for (int i = snakeBody.size() - 1; i >= 0; i--) {
             Tile snakePart = snakeBody.get(i);
             if (i == 0) {
                 snakePart.x = snakeHead.x;
                 snakePart.y = snakeHead.y;
-            }
-            else {
-                Tile prevSnakePart = snakeBody.get(i-1);
+            } else {
+                Tile prevSnakePart = snakeBody.get(i - 1);
                 snakePart.x = prevSnakePart.x;
                 snakePart.y = prevSnakePart.y;
             }
@@ -152,8 +157,8 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
         snakeHead.y += velocityY;
 
         // Wrap around screen
-        snakeHead.x = (snakeHead.x + boardWidth/tileSize) % (boardWidth/tileSize);
-        snakeHead.y = (snakeHead.y + boardHeight/tileSize) % (boardHeight/tileSize);
+        snakeHead.x = (snakeHead.x + boardWidth / tileSize) % (boardWidth / tileSize);
+        snakeHead.y = (snakeHead.y + boardHeight / tileSize) % (boardHeight / tileSize);
 
         // Check for collision with snake body
         for (int i = 0; i < snakeBody.size(); i++) {
@@ -186,18 +191,17 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
             if (e.getKeyCode() == KeyEvent.VK_UP && velocityY != 1) {
                 velocityX = 0;
                 velocityY = -1;
-            }
-            else if (e.getKeyCode() == KeyEvent.VK_DOWN && velocityY != -1) {
+            } else if (e.getKeyCode() == KeyEvent.VK_DOWN && velocityY != -1) {
                 velocityX = 0;
                 velocityY = 1;
-            }
-            else if (e.getKeyCode() == KeyEvent.VK_LEFT && velocityX != 1) {
+            } else if (e.getKeyCode() == KeyEvent.VK_LEFT && velocityX != 1) {
                 velocityX = -1;
                 velocityY = 0;
-            }
-            else if (e.getKeyCode() == KeyEvent.VK_RIGHT && velocityX != -1) {
+            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT && velocityX != -1) {
                 velocityX = 1;
                 velocityY = 0;
+            }else if (e.getKeyChar() == '0') {
+                System.exit(0);
             }
         }
     }
@@ -210,7 +214,7 @@ public class SnakeGame extends JPanel implements ActionListener, KeyListener {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Snake");
-        SnakeGame snakeGame = new SnakeGame(400, 400);
+        SnakeGame snakeGame = new SnakeGame(600, 600);
 
         frame.add(snakeGame);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
